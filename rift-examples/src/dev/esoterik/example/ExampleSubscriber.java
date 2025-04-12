@@ -16,8 +16,9 @@ public record ExampleSubscriber(String topic, AtomicBoolean received) implements
   public ExampleResponse handle(final ExampleRequest request) {
     if (request.getPlayerId() == null) {
       return null; // condition not met, do not process, just remember to handle future's throwable
-                   // from a timeout!
+      // from a timeout!
     }
-    return (ExampleResponse) new ExampleResponse(request.getPlayerId() + "'s location is 0 3 3").pointAt(request);
+    return (ExampleResponse)
+        new ExampleResponse(request.getPlayerId() + "'s location is 0 3 3").pointAt(request);
   }
 }

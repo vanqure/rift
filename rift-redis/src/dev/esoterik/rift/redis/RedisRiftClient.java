@@ -5,13 +5,17 @@ import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
 
 import dev.esoterik.rift.RiftClient;
+import dev.esoterik.rift.cache.CacheProvider;
 import dev.esoterik.rift.codec.Packet;
 import dev.esoterik.rift.codec.Serializer;
 import dev.esoterik.rift.lock.DistributedLock;
+import dev.esoterik.rift.map.CachedMap;
+import dev.esoterik.rift.map.CachedMapUpdate;
 import dev.esoterik.rift.map.RiftMap;
 import dev.esoterik.rift.packet.PacketBroker;
 import dev.esoterik.rift.packet.PacketSubscriber;
 import dev.esoterik.rift.redis.lock.RedisLock;
+import dev.esoterik.rift.redis.map.RedisCachedMap;
 import dev.esoterik.rift.redis.map.RedisKeyValue;
 import dev.esoterik.rift.redis.map.RedisMap;
 import dev.esoterik.rift.redis.packet.RedisPacketBroker;
@@ -23,6 +27,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
 public final class RedisRiftClient<S extends Serializable, P extends Packet>
@@ -113,6 +118,15 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet>
   @Override
   public <F, V extends S> @NotNull RiftMap<S, F, V> getMap(final @NotNull String key) {
     return RedisMap.create(key, serializer, connection);
+  }
+
+  @Override
+  public <U extends CachedMapUpdate, F, V extends S> CachedMap<S, U, F, V> getCachedMap(
+      final String key,
+      final CacheProvider<F, V> cacheProvider,
+      final BiFunction<String, String, U> updateFactory) {
+    return RedisCachedMap.create(
+        key, serializer, getMap(key), cacheProvider, packetBroker, updateFactory);
   }
 
   @Override

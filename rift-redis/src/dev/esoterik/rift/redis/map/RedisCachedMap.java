@@ -4,6 +4,7 @@ import dev.esoterik.rift.cache.CacheProvider;
 import dev.esoterik.rift.codec.Serializer;
 import dev.esoterik.rift.map.CachedMap;
 import dev.esoterik.rift.map.CachedMapUpdate;
+import dev.esoterik.rift.map.RiftMap;
 import dev.esoterik.rift.packet.PacketBroker;
 import dev.esoterik.rift.packet.PacketHandler;
 import dev.esoterik.rift.packet.PacketSubscriber;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpdate, F, V extends S>
     implements PacketSubscriber, CachedMap<S, P, F, V> {
 
-  private final RedisMap<S, F, V> map;
+  private final RiftMap<S, F, V> map;
   private final String key;
   private final PacketBroker packetBroker;
   private final String mapUpdatesTopic;
@@ -28,7 +29,7 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
   private RedisCachedMap(
       final String key,
       final Serializer serializer,
-      final RedisMap<S, F, V> map,
+      final RiftMap<S, F, V> map,
       final CacheProvider<F, V> cacheProvider,
       final PacketBroker<?> packetBroker,
       final BiFunction<String, String, P> updateFactory) {
@@ -48,7 +49,7 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
       RedisCachedMap<S, P, F, V> create(
           final String key,
           final Serializer serializer,
-          final RedisMap<S, F, V> map,
+          final RiftMap<S, F, V> map,
           final CacheProvider<F, V> cacheProvider,
           final PacketBroker<?> packetBroker,
           final BiFunction<String, String, P> updateFactory) {
