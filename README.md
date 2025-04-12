@@ -64,12 +64,6 @@ final class QueueHandler implements PacketSubscriber {
 }
 ```
 
-### Locking & Safety
-
-Each of the Redis maps in Rift comes with its own set of locks. By calling the `#getLock(key)`
-method on any of the maps, you gain full control over the lock lifecycle, ensuring that your
-operations are thread-safe and consistent across distributed systems.
-
 ### Conclusion
 
 Rift is designed for those building highly concurrent, distributed systems with complex caching,
