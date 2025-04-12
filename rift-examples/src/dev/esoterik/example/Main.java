@@ -1,15 +1,15 @@
 package dev.esoterik.example;
 
 import dev.esoterik.rift.RiftClient;
-import dev.esoterik.rift.codec.Packet;
 import dev.esoterik.rift.codec.Serializer;
+import dev.esoterik.rift.codec.jackson.JacksonPacket;
+import dev.esoterik.rift.codec.jackson.JacksonSerializable;
 import dev.esoterik.rift.codec.jackson.JacksonSerializerFactory;
 import dev.esoterik.rift.redis.RedisRiftClient;
 import dev.esoterik.rift.scheduler.Scheduler;
 import dev.esoterik.rift.scheduler.StandaloneScheduler;
 import io.lettuce.core.RedisClient;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,7 +19,7 @@ public class Main {
   public static void main(final String[] args) {
     final Serializer serializer = JacksonSerializerFactory.create();
     final Scheduler scheduler = StandaloneScheduler.create();
-    final RiftClient<Serializable, Packet> riftClient =
+    final RiftClient<JacksonSerializable, JacksonPacket> riftClient =
         RedisRiftClient.create(serializer, scheduler, RedisClient.create("redis://localhost:6379"));
 
     final AtomicBoolean received = new AtomicBoolean(false);
@@ -54,6 +54,8 @@ public class Main {
     } catch (final InterruptedException | ExecutionException e) {
       e.printStackTrace();
     }
+
+    new ExampleCachedMap(riftClient);
 
     try {
       riftClient.close();
