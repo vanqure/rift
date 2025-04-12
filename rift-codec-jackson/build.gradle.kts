@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(project(":rift-codec"))
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.3")
 }
