@@ -137,7 +137,8 @@ Rift uses a `PacketBroker<P extends Packet>` for both pub/sub messaging and asyn
 
 ### Scheduler
 
-The `Scheduler` interface (with its default, `StandaloneScheduler`) allows background tasks and retry scheduling. It is used extensively for lock acquisition retries and asynchronous housekeeping tasks.
+The `Scheduler` interface (with its default, `StandaloneScheduler`) is used currently only for lock watching system (it's prolonging etc.).
+If you're using system like Spigot or other minecraft related framework, you can implement your own `Scheduler` via using BukkitScheduler#runTaskTimerAsynchronously and calculation of duration to ticks to avoid the creation of next ExecutorService.
 
 ---
 
