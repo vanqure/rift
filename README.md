@@ -150,7 +150,7 @@ For RPC operations (which use `CompletableFuture`):
    Apply `orTimeout` to guard against hanging calls.  
    _Example:_
    ```java
-   riftClient.request("example-topic", new ExampleRequest("playerId"))
+   riftClient.<ExampleResponse>request("example-topic", new ExampleRequest("playerId"))
        .orTimeout(5, TimeUnit.SECONDS)
        .whenComplete((response, throwable) -> {
            if (throwable != null) {
