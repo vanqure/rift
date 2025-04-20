@@ -30,23 +30,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import org.jetbrains.annotations.NotNull;
 
-public final class RedisRiftClient<S extends Serializable, P extends Packet>
-    implements RiftClient<S, P> {
+public final class RedisRiftClient<S extends Serializable, P extends Packet> implements RiftClient<S, P> {
 
-  private static final Duration DEFAULT_LOCK_ACQUIRE_DELAY = ofMillis(150L);
-  private static final Duration DEFAULT_LOCK_ACQUIRE_UNTIL = ofSeconds(3L);
+    private static final Duration DEFAULT_LOCK_ACQUIRE_DELAY = ofMillis(150L);
+    private static final Duration DEFAULT_LOCK_ACQUIRE_UNTIL = ofSeconds(3L);
 
-  private final String identity;
+    private final String identity;
 
-  private final Scheduler scheduler;
-  private final Serializer serializer;
+    private final Scheduler scheduler;
+    private final Serializer serializer;
 
-  private final PacketBroker<P> packetBroker;
+    private final PacketBroker<P> packetBroker;
 
-  private final RedisKeyValue keyValue;
+    private final RedisKeyValue keyValue;
 
-  private final StatefulRedisConnection<String, String> connection;
-  private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
+    private final StatefulRedisConnection<String, String> connection;
+    private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
 
     private RedisRiftClient(
             String identity,
@@ -56,14 +55,14 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet>
             RedisKeyValue keyValue,
             StatefulRedisConnection<String, String> connection,
             StatefulRedisPubSubConnection<String, String> pubSubConnection) {
-    this.identity = identity;
-    this.scheduler = scheduler;
-    this.serializer = serializer;
-    this.packetBroker = packetBroker;
-    this.keyValue = keyValue;
-    this.connection = connection;
-    this.pubSubConnection = pubSubConnection;
-  }
+        this.identity = identity;
+        this.scheduler = scheduler;
+        this.serializer = serializer;
+        this.packetBroker = packetBroker;
+        this.keyValue = keyValue;
+        this.connection = connection;
+        this.pubSubConnection = pubSubConnection;
+    }
 
     public static <S extends Serializable, P extends Packet> RiftClient<S, P> create(
             String identity,
@@ -73,14 +72,14 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet>
             RedisKeyValue keyValue,
             StatefulRedisConnection<String, String> connection,
             StatefulRedisPubSubConnection<String, String> pubSubConnection) {
-    return new RedisRiftClient<>(
-        identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
-  }
+        return new RedisRiftClient<>(
+                identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
+    }
 
     public static <S extends Serializable, P extends Packet> RiftClient<S, P> create(
             Serializer serializer, Scheduler scheduler, RedisClient redisClient) {
-    return create(String.valueOf(current().pid()), serializer, scheduler, redisClient);
-  }
+        return create(String.valueOf(current().pid()), serializer, scheduler, redisClient);
+    }
 
     public static <S extends Serializable, P extends Packet> RiftClient<S, P> create(
             String identity, Serializer serializer, Scheduler scheduler, RedisClient redisClient) {
@@ -90,56 +89,54 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet>
         PacketBroker<P> packetBroker = RedisPacketBroker.create(identity, serializer, connection, pubSubConnection);
         RedisKeyValue keyValue = RedisKeyValue.create(connection);
 
-    return create(
-        identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
-  }
+        return create(identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
+    }
 
     @Override
     public void publish(@NotNull String channelName, @NotNull P packet) {
-    packetBroker.publish(channelName, packet);
-  }
+        packetBroker.publish(channelName, packet);
+    }
 
     @Override
     public <R extends P> @NotNull CompletableFuture<R> request(@NotNull String channelName, @NotNull P request) {
-    return packetBroker.request(channelName, request);
-  }
+        return packetBroker.request(channelName, request);
+    }
 
     @Override
     public void subscribe(@NotNull PacketSubscriber packetSubscriber) {
-    packetBroker.subscribe(packetSubscriber);
-  }
+        packetBroker.subscribe(packetSubscriber);
+    }
 
     @Override
     public <F, V extends S> @NotNull RiftMap<S, F, V> getMap(@NotNull String key) {
-    return RedisMap.create(key, serializer, connection);
-  }
+        return RedisMap.create(key, serializer, connection);
+    }
 
     @Override
     public <U extends CachedMapUpdate, F, V extends S> CachedMap<S, U, F, V> getCachedMap(
             String key, CacheProvider<F, V> cacheProvider, BiFunction<String, String, U> updateFactory) {
-    return RedisCachedMap.create(
-        key, serializer, getMap(key), cacheProvider, packetBroker, updateFactory);
-  }
+        return RedisCachedMap.create(key, serializer, getMap(key), cacheProvider, packetBroker, updateFactory);
+    }
 
     @Override
     public @NotNull DistributedLock getLock(@NotNull String key, int tries) {
-    return getLock(key, DEFAULT_LOCK_ACQUIRE_DELAY, DEFAULT_LOCK_ACQUIRE_UNTIL, tries);
-  }
+        return getLock(key, DEFAULT_LOCK_ACQUIRE_DELAY, DEFAULT_LOCK_ACQUIRE_UNTIL, tries);
+    }
 
     @Override
     public @NotNull DistributedLock getLock(String key, Duration delay, Duration until, int tries) {
-    return RedisLock.create(scheduler, key, identity, delay, until, tries, keyValue);
-  }
+        return RedisLock.create(scheduler, key, identity, delay, until, tries, keyValue);
+    }
 
     @Override
     public DistributedLock getLock(@NotNull String key) {
-    return getLock(key, -1);
-  }
+        return getLock(key, -1);
+    }
 
-  @Override
-  public void close() throws IOException {
-    packetBroker.close();
-    connection.close();
-    pubSubConnection.close();
-  }
+    @Override
+    public void close() throws IOException {
+        packetBroker.close();
+        connection.close();
+        pubSubConnection.close();
+    }
 }
