@@ -4,29 +4,29 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractPacket implements Packet {
 
-  private String source;
-  private String target;
+    private String source;
+    private String target;
 
-  protected AbstractPacket() {}
+    protected AbstractPacket() {}
 
-  @Override
-  public String source() {
-    return source;
-  }
+    @Override
+    public String source() {
+        return source;
+    }
 
-  @Override
-  public void source(final @NotNull String source) {
-    this.source = source;
-  }
+    @Override
+    public void source(@NotNull String source) {
+        this.source = source;
+    }
 
-  @Override
-  public String target() {
-    return target;
-  }
+    @Override
+    public String target() {
+        return target;
+    }
 
-  @Override
-  public Packet pointAt(final Packet request) {
-    this.target = request.source();
-    return this;
-  }
+    @Override
+    public Packet pointAt(@NotNull Packet request) {
+        this.target = request.source();
+        return this;
+    }
 }

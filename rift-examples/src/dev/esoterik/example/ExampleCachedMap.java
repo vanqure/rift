@@ -9,29 +9,27 @@ import java.util.UUID;
 
 public class ExampleCachedMap {
 
-  private final CachedMap<JacksonSerializable, JacksonCachedMapUpdate, UUID, ExamplePojo>
-      redisCachedMap;
+    private final CachedMap<JacksonSerializable, JacksonCachedMapUpdate, UUID, ExamplePojo> redisCachedMap;
 
-  public ExampleCachedMap(final RiftClient<JacksonSerializable, JacksonPacket> riftClient) {
-    this.redisCachedMap =
-        riftClient.getCachedMap(
-            "my_map_name", new AsyncCaffeineCacheProvider<>(), JacksonCachedMapUpdate::new);
-    test();
-  }
+    public ExampleCachedMap(RiftClient<JacksonSerializable, JacksonPacket> riftClient) {
+        this.redisCachedMap =
+                riftClient.getCachedMap("my_map_name", new AsyncCaffeineCacheProvider<>(), JacksonCachedMapUpdate::new);
+        test();
+    }
 
-  private void test() {
-    final UUID uniqueId = UUID.randomUUID();
-    final ExamplePojo value = new ExamplePojo(uniqueId);
-    value.getData().put("health", "20");
-    System.out.println("current data: " + value.getData());
-    redisCachedMap.set(uniqueId, value);
+    private void test() {
+        UUID uniqueId = UUID.randomUUID();
+        ExamplePojo value = new ExamplePojo(uniqueId);
+        value.getData().put("health", "20");
+        System.out.println("current data: " + value.getData());
+        redisCachedMap.set(uniqueId, value);
 
-    final ExamplePojo fetched = redisCachedMap.get(uniqueId);
-    System.out.println("fetched data: " + fetched.getData());
+        ExamplePojo fetched = redisCachedMap.get(uniqueId);
+        System.out.println("fetched data: " + fetched.getData());
 
-    redisCachedMap.del(uniqueId);
+        redisCachedMap.del(uniqueId);
 
-    redisCachedMap.keys().forEach(System.out::println);
-    redisCachedMap.values().forEach(System.out::println);
-  }
+        redisCachedMap.keys().forEach(System.out::println);
+        redisCachedMap.values().forEach(System.out::println);
+    }
 }

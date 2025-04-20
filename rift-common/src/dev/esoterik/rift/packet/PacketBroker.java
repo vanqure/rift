@@ -6,11 +6,11 @@ import java.util.concurrent.CompletableFuture;
 
 public interface PacketBroker<P extends Packet> extends Closeable {
 
-  String getIdentity();
+    String getIdentity();
 
-  void subscribe(PacketSubscriber packetSubscriber);
+    void subscribe(PacketSubscriber packetSubscriber);
 
-  void publish(String channelName, P packet);
+    void publish(String channelName, P packet);
 
-  <R extends P> CompletableFuture<R> request(String channelName, P request);
+    <R extends P> CompletableFuture<R> request(String channelName, P request);
 }

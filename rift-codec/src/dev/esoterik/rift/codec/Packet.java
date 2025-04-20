@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Packet extends Serializable {
 
-  String source();
+    String source();
 
-  void source(@NotNull String source);
+    void source(@NotNull String source);
 
-  String target();
+    String target();
 
-  Packet pointAt(@NotNull Packet request);
+    Packet pointAt(@NotNull Packet request);
 }

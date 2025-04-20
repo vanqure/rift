@@ -5,21 +5,21 @@ import dev.esoterik.rift.codec.jackson.AbstractJacksonPacket;
 
 public class ExampleResponse extends AbstractJacksonPacket {
 
-  private String playerLocation;
+    private String playerLocation;
 
-  @JsonCreator
-  private ExampleResponse() {}
+    @JsonCreator
+    private ExampleResponse() {}
 
-  public ExampleResponse(final String playerLocation) {
-    this.playerLocation = playerLocation;
-  }
+    public ExampleResponse(String playerLocation) {
+        this.playerLocation = playerLocation;
+    }
 
-  public String getPlayerLocation() {
-    return playerLocation;
-  }
+    public String getPlayerLocation() {
+        return playerLocation;
+    }
 
-  @Override
-  public String toString() {
-    return "ExampleResponse{" + "playerLocation='" + playerLocation + '\'' + '}';
-  }
+    @Override
+    public String toString() {
+        return "ExampleResponse{" + "playerLocation='" + playerLocation + '\'' + '}';
+    }
 }

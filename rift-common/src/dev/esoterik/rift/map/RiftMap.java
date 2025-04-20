@@ -6,17 +6,17 @@ import java.util.stream.Stream;
 
 public interface RiftMap<S extends Serializable, F, V extends S> {
 
-  boolean set(F field, V value);
+    boolean set(F field, V value);
 
-  V get(F field);
+    V get(F field);
 
-  boolean del(F field);
+    boolean del(F field);
 
-  Stream<F> fields();
+    Stream<F> fields();
 
-  Stream<V> values();
+    Stream<V> values();
 
-  Map<F, V> entries();
+    Map<F, V> entries();
 
-  long size();
+    long size();
 }

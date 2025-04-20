@@ -11,19 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public final class PacketSubscriberProcessor implements BeanPostProcessor {
 
-  private final RiftClient<?, ?> riftClient;
+    private final RiftClient<?, ?> riftClient;
 
-  @Autowired
-  public PacketSubscriberProcessor(final RiftClient<?, ?> riftClient) {
-    this.riftClient = riftClient;
-  }
+    @Autowired
+    public PacketSubscriberProcessor(RiftClient<?, ?> riftClient) {
+        this.riftClient = riftClient;
+    }
 
-  @Override
-  public Object postProcessAfterInitialization(
-      final @NotNull Object bean, final @NotNull String beanName) throws BeansException {
-    if (bean instanceof final PacketSubscriber packetSubscriber)
-      riftClient.subscribe(packetSubscriber);
+    @Override
+    public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+        if (bean instanceof PacketSubscriber packetSubscriber) riftClient.subscribe(packetSubscriber);
 
-    return bean;
-  }
+        return bean;
+    }
 }

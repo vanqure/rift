@@ -5,11 +5,11 @@ package dev.esoterik.rift.codec;
  */
 public final class SerializerException extends IllegalStateException {
 
-  public SerializerException(final String message) {
-    super(message);
-  }
+    public SerializerException(String message) {
+        super(message);
+    }
 
-  public SerializerException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+    public SerializerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

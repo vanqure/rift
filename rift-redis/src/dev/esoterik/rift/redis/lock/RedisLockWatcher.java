@@ -35,11 +35,11 @@ final class RedisLockWatcher {
   private final AtomicLong ownerThreadId = new AtomicLong(0);
 
   RedisLockWatcher(
-      final Scheduler scheduler,
-      final String identity,
-      final String key,
-      final Duration until,
-      final KeyValue keyValue) {
+      Scheduler scheduler,
+      String identity,
+      String key,
+      Duration until,
+      KeyValue keyValue) {
     this.scheduler = scheduler;
     this.identity = identity;
     this.key = key;
@@ -47,17 +47,17 @@ final class RedisLockWatcher {
     this.keyValue = keyValue;
   }
 
-  void acquireOrThrow(final long currentThreadId) throws DistributedLockException {
+  void acquireOrThrow(long currentThreadId) throws DistributedLockException {
     if (!acquire(currentThreadId)) {
       throw new DistributedLockException("Lock is already held by another process.");
     }
   }
 
-  boolean acquire(final long currentThreadId) {
+  boolean acquire(long currentThreadId) {
     // Check if current thread already holds the lock (reentrant case)
     if (isHeldByCurrentThread(currentThreadId)) {
       // Increment lock count for this thread
-      final int count =
+      int count =
           threadLockCount.compute(
               currentThreadId, (id, lockCount) -> lockCount == null ? 1 : lockCount + 1);
       totalLockCount.incrementAndGet();
@@ -67,7 +67,7 @@ final class RedisLockWatcher {
     }
 
     // Try to acquire the distributed lock
-    final boolean result = keyValue.set(key, identity, until, true);
+    boolean result = keyValue.set(key, identity, until, true);
     if (result) {
       acquired.set(true);
       ownerThreadId.set(currentThreadId);
@@ -81,7 +81,7 @@ final class RedisLockWatcher {
     release(Thread.currentThread().getId());
   }
 
-  void release(final long currentThreadId) {
+  void release(long currentThreadId) {
     // Only the thread that acquired the lock can release it
     if (!isHeldByCurrentThread(currentThreadId)) {
       logger.warning(
@@ -91,9 +91,9 @@ final class RedisLockWatcher {
     }
 
     // Decrement lock count for this thread
-    final int newCount =
+    int newCount =
         threadLockCount.compute(currentThreadId, (id, count) -> count == null ? 0 : count - 1);
-    final int totalCount = totalLockCount.decrementAndGet();
+    int totalCount = totalLockCount.decrementAndGet();
 
     // If this thread has no more locks, remove it of the map
     if (newCount <= 0) {
@@ -107,7 +107,7 @@ final class RedisLockWatcher {
     }
   }
 
-  boolean isHeldByCurrentThread(final long currentThreadId) {
+  boolean isHeldByCurrentThread(long currentThreadId) {
     return currentThreadId == ownerThreadId.get() && acquired.get();
   }
 
@@ -129,7 +129,7 @@ final class RedisLockWatcher {
                 if (acquired.get()) {
                   keyValue.ttl(key, now().plus(until));
                 }
-              } catch (final Exception exception) {
+              } catch (Exception exception) {
                 logger.log(
                     SEVERE, "An error occurred while watching lock %s.".formatted(key), exception);
               }

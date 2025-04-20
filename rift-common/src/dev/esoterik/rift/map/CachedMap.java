@@ -5,15 +5,15 @@ import java.util.stream.Stream;
 
 public interface CachedMap<S extends Serializable, P extends CachedMapUpdate, F, V extends S> {
 
-  void set(F field, V value);
+    void set(F field, V value);
 
-  V get(F field);
+    V get(F field);
 
-  void del(F field);
+    void del(F field);
 
-  Iterable<F> keys();
+    Iterable<F> keys();
 
-  Stream<V> values();
+    Stream<V> values();
 
-  long size();
+    long size();
 }

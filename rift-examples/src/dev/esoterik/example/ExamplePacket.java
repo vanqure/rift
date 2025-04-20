@@ -5,21 +5,21 @@ import dev.esoterik.rift.codec.jackson.AbstractJacksonPacket;
 
 public class ExamplePacket extends AbstractJacksonPacket {
 
-  private String exampleField;
+    private String exampleField;
 
-  @JsonCreator
-  private ExamplePacket() {}
+    @JsonCreator
+    private ExamplePacket() {}
 
-  public ExamplePacket(final String exampleField) {
-    this.exampleField = exampleField;
-  }
+    public ExamplePacket(String exampleField) {
+        this.exampleField = exampleField;
+    }
 
-  public String getExampleField() {
-    return exampleField;
-  }
+    public String getExampleField() {
+        return exampleField;
+    }
 
-  @Override
-  public String toString() {
-    return "ExamplePacket{" + "exampleField='" + exampleField + '\'' + '}';
-  }
+    @Override
+    public String toString() {
+        return "ExamplePacket{" + "exampleField='" + exampleField + '\'' + '}';
+    }
 }

@@ -16,25 +16,24 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RiftClient<S extends Serializable, P extends Packet> extends Closeable {
 
-  void publish(@NotNull String channelName, @NotNull P packet);
+    default DistributedLock getLock(@NotNull String key) {
+        return getLock(key, -1);
+    }
 
-  <R extends P> @NotNull CompletableFuture<R> request(@NotNull String channelName, @NotNull P request);
+    void publish(@NotNull String channelName, @NotNull P packet);
 
-  void subscribe(@NotNull PacketSubscriber packetSubscriber);
+    <R extends P> @NotNull CompletableFuture<R> request(@NotNull String channelName, @NotNull P request);
 
-  <F, V extends S> @NotNull RiftMap<S, F, V> getMap(@NotNull String key);
+    void subscribe(@NotNull PacketSubscriber packetSubscriber);
 
-  <U extends CachedMapUpdate, F, V extends S> CachedMap<S, U, F, V> getCachedMap(
-      String key,
-      CacheProvider<F, V> cacheProvider,
-      BiFunction<String, String, U> updateFactory);
+    <F, V extends S> @NotNull RiftMap<S, F, V> getMap(@NotNull String key);
 
-  @NotNull DistributedLock getLock(@NotNull String key, int tries);
+    <U extends CachedMapUpdate, F, V extends S> CachedMap<S, U, F, V> getCachedMap(
+            String key, CacheProvider<F, V> cacheProvider, BiFunction<String, String, U> updateFactory);
 
-  @NotNull DistributedLock getLock(
-      String key, Duration delay, Duration until, int tries);
+    @NotNull
+    DistributedLock getLock(@NotNull String key, int tries);
 
-  default DistributedLock getLock(final @NotNull String key) {
-    return getLock(key, -1);
-  }
+    @NotNull
+    DistributedLock getLock(String key, Duration delay, Duration until, int tries);
 }

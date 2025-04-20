@@ -6,24 +6,24 @@ import dev.esoterik.rift.map.CachedMapUpdate;
 
 public class JacksonCachedMapUpdate extends AbstractJacksonPacket implements CachedMapUpdate {
 
-  private String key;
-  private String value;
+    private String key;
+    private String value;
 
-  @JsonCreator
-  private JacksonCachedMapUpdate() {}
+    @JsonCreator
+    private JacksonCachedMapUpdate() {}
 
-  public JacksonCachedMapUpdate(final String key, final String value) {
-    this.key = key;
-    this.value = value;
-  }
+    public JacksonCachedMapUpdate(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 
-  @Override
-  public String getKey() {
-    return key;
-  }
+    @Override
+    public String getKey() {
+        return key;
+    }
 
-  @Override
-  public String getValue() {
-    return value;
-  }
+    @Override
+    public String getValue() {
+        return value;
+    }
 }

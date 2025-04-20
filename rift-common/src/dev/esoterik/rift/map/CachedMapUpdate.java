@@ -4,7 +4,7 @@ import dev.esoterik.rift.codec.Packet;
 
 public interface CachedMapUpdate extends Packet {
 
-  String getKey();
+    String getKey();
 
-  String getValue();
+    String getValue();
 }

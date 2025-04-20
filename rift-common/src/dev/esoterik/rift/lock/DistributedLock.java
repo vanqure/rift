@@ -6,24 +6,23 @@ import org.jetbrains.annotations.Nullable;
 
 public interface DistributedLock {
 
-  default <T> @Nullable T supply(final @NotNull Supplier<T> supplier) throws RetryingException {
-    return supply(Thread.currentThread().getId(), supplier);
-  }
+    default <T> @Nullable T supply(@NotNull Supplier<T> supplier) throws RetryingException {
+        return supply(Thread.currentThread().getId(), supplier);
+    }
 
-  <T> @Nullable T supply(long currentThreadId, @NotNull Supplier<@Nullable T> supplier)
-      throws RetryingException;
+    default void execute(@NotNull Runnable task) throws RetryingException {
+        execute(Thread.currentThread().getId(), task);
+    }
 
-  default void execute(final @NotNull Runnable task) throws RetryingException {
-    execute(Thread.currentThread().getId(), task);
-  }
+    default boolean tryOnce(@NotNull Runnable task) throws RetryingException {
+        return tryOnce(Thread.currentThread().getId(), task);
+    }
 
-  void execute(long currentThreadId, @NotNull Runnable task) throws RetryingException;
+    <T> @Nullable T supply(long currentThreadId, @NotNull Supplier<@Nullable T> supplier) throws RetryingException;
 
-  default boolean tryOnce(final @NotNull Runnable task) throws RetryingException {
-    return tryOnce(Thread.currentThread().getId(), task);
-  }
+    void execute(long currentThreadId, @NotNull Runnable task) throws RetryingException;
 
-  boolean tryOnce(long currentThreadId, @NotNull Runnable task) throws RetryingException;
+    boolean tryOnce(long currentThreadId, @NotNull Runnable task) throws RetryingException;
 
-  void forceRelease();
+    void forceRelease();
 }
