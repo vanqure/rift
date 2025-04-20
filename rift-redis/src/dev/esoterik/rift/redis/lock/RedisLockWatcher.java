@@ -34,12 +34,7 @@ final class RedisLockWatcher {
   private final AtomicInteger totalLockCount = new AtomicInteger(0);
   private final AtomicLong ownerThreadId = new AtomicLong(0);
 
-  RedisLockWatcher(
-      Scheduler scheduler,
-      String identity,
-      String key,
-      Duration until,
-      KeyValue keyValue) {
+    RedisLockWatcher(Scheduler scheduler, String identity, String key, Duration until, KeyValue keyValue) {
     this.scheduler = scheduler;
     this.identity = identity;
     this.key = key;
@@ -47,27 +42,26 @@ final class RedisLockWatcher {
     this.keyValue = keyValue;
   }
 
-  void acquireOrThrow(long currentThreadId) throws DistributedLockException {
+    void acquireOrThrow(long currentThreadId) throws DistributedLockException {
     if (!acquire(currentThreadId)) {
       throw new DistributedLockException("Lock is already held by another process.");
     }
   }
 
-  boolean acquire(long currentThreadId) {
+    boolean acquire(long currentThreadId) {
     // Check if current thread already holds the lock (reentrant case)
     if (isHeldByCurrentThread(currentThreadId)) {
-      // Increment lock count for this thread
-      int count =
-          threadLockCount.compute(
-              currentThreadId, (id, lockCount) -> lockCount == null ? 1 : lockCount + 1);
+            // Increment lock count for this thread
+            int count =
+                    threadLockCount.compute(currentThreadId, (id, lockCount) -> lockCount == null ? 1 : lockCount + 1);
       totalLockCount.incrementAndGet();
       logger.info(
           "Thread %s reacquired lock %s (count: %s)".formatted(currentThreadId, key, count));
       return true;
     }
 
-    // Try to acquire the distributed lock
-    boolean result = keyValue.set(key, identity, until, true);
+        // Try to acquire the distributed lock
+        boolean result = keyValue.set(key, identity, until, true);
     if (result) {
       acquired.set(true);
       ownerThreadId.set(currentThreadId);
@@ -81,7 +75,7 @@ final class RedisLockWatcher {
     release(Thread.currentThread().getId());
   }
 
-  void release(long currentThreadId) {
+    void release(long currentThreadId) {
     // Only the thread that acquired the lock can release it
     if (!isHeldByCurrentThread(currentThreadId)) {
       logger.warning(
@@ -90,10 +84,9 @@ final class RedisLockWatcher {
       return;
     }
 
-    // Decrement lock count for this thread
-    int newCount =
-        threadLockCount.compute(currentThreadId, (id, count) -> count == null ? 0 : count - 1);
-    int totalCount = totalLockCount.decrementAndGet();
+        // Decrement lock count for this thread
+        int newCount = threadLockCount.compute(currentThreadId, (id, count) -> count == null ? 0 : count - 1);
+        int totalCount = totalLockCount.decrementAndGet();
 
     // If this thread has no more locks, remove it of the map
     if (newCount <= 0) {
@@ -107,7 +100,7 @@ final class RedisLockWatcher {
     }
   }
 
-  boolean isHeldByCurrentThread(long currentThreadId) {
+    boolean isHeldByCurrentThread(long currentThreadId) {
     return currentThreadId == ownerThreadId.get() && acquired.get();
   }
 
@@ -122,19 +115,17 @@ final class RedisLockWatcher {
   void startWatching() {
     stopWatching();
 
-    scheduledTask.set(
-        scheduler.schedule(
-            () -> {
-              try {
-                if (acquired.get()) {
-                  keyValue.ttl(key, now().plus(until));
-                }
-              } catch (Exception exception) {
-                logger.log(
-                    SEVERE, "An error occurred while watching lock %s.".formatted(key), exception);
-              }
-            },
-            ofSeconds(1L)));
+        scheduledTask.set(scheduler.schedule(
+                () -> {
+                    try {
+                        if (acquired.get()) {
+                            keyValue.ttl(key, now().plus(until));
+                        }
+                    } catch (Exception exception) {
+                        logger.log(SEVERE, "An error occurred while watching lock %s.".formatted(key), exception);
+                    }
+                },
+                ofSeconds(1L)));
   }
 
   void stopWatching() {

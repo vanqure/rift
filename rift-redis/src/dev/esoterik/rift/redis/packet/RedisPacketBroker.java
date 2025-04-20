@@ -19,36 +19,34 @@ import java.util.function.Consumer;
 public final class RedisPacketBroker<P extends Packet> implements PacketBroker<P> {
 
   private final String identity;
-  private final PacketDispatcher dispatcher;
+    private final PacketDispatcher dispatcher;
   private final Serializer serializer;
   private final StatefulRedisConnection<String, String> connection;
   private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
   private final Map<String, CompletableFuture<?>> callbacks = new ConcurrentHashMap<>();
   private final Set<String> subscribedTopics = ConcurrentHashMap.newKeySet();
 
-  private RedisPacketBroker(
-      String identity,
-      Serializer serializer,
-      StatefulRedisConnection<String, String> connection,
-      StatefulRedisPubSubConnection<String, String> pubSubConnection) {
+    private RedisPacketBroker(
+            String identity,
+            Serializer serializer,
+            StatefulRedisConnection<String, String> connection,
+            StatefulRedisPubSubConnection<String, String> pubSubConnection) {
     this.identity = identity;
-    this.dispatcher =
-        new PacketDispatcher(
-            (request, response) -> {
-              //noinspection unchecked
-              delegateCallback((P) request, (P) response);
-            });
+        this.dispatcher = new PacketDispatcher((request, response) -> {
+            //noinspection unchecked
+            delegateCallback((P) request, (P) response);
+        });
     this.serializer = serializer;
     this.connection = connection;
     this.pubSubConnection = pubSubConnection;
     subscribeCallbacks();
   }
 
-  public static <P extends Packet> PacketBroker<P> create(
-      String identity,
-      Serializer serializer,
-      StatefulRedisConnection<String, String> connection,
-      StatefulRedisPubSubConnection<String, String> pubSubConnection) {
+    public static <P extends Packet> PacketBroker<P> create(
+            String identity,
+            Serializer serializer,
+            StatefulRedisConnection<String, String> connection,
+            StatefulRedisPubSubConnection<String, String> pubSubConnection) {
     return new RedisPacketBroker<>(identity, serializer, connection, pubSubConnection);
   }
 
@@ -57,54 +55,49 @@ public final class RedisPacketBroker<P extends Packet> implements PacketBroker<P
     return identity;
   }
 
-  private void delegateCallback(P request, P response) {
+    private void delegateCallback(P request, P response) {
     requireNonNull(
         request.source(), "Could not delegate packet to packet broker due to missing source.");
     publish("callbacks", response);
   }
 
   private void subscribeCallbacks() {
-    pubSubConnection.addListener(
-        new RedisPacketDelegate(
-            "callbacks",
-            message -> {
-              P response = serializer.deserialize(message);
-              if (response.target() == null) {
+        pubSubConnection.addListener(new RedisPacketDelegate("callbacks", message -> {
+            P response = serializer.deserialize(message);
+            if (response.target() == null) {
                 return;
-              }
+            }
 
-              CompletableFuture<?> future = callbacks.get(response.target());
-              if (future == null) {
+            CompletableFuture<?> future = callbacks.get(response.target());
+            if (future == null) {
                 return;
-              }
+            }
 
-              //noinspection unchecked
-              ((CompletableFuture<P>) future).complete(response);
-            }));
+            //noinspection unchecked
+            ((CompletableFuture<P>) future).complete(response);
+        }));
     pubSubConnection.sync().subscribe("callbacks");
   }
 
-  @Override
-  public void subscribe(PacketSubscriber packetSubscriber) {
-    dispatcher.subscribe(packetSubscriber);
+    @Override
+    public void subscribe(PacketSubscriber packetSubscriber) {
+        dispatcher.subscribe(packetSubscriber);
 
-    String topic = packetSubscriber.topic();
-    subscribePacketBroker(
-        topic,
-        message -> {
-          P packet = serializer.deserialize(message);
-          dispatcher.dispatch(packet, topic);
+        String topic = packetSubscriber.topic();
+        subscribePacketBroker(topic, message -> {
+            P packet = serializer.deserialize(message);
+            dispatcher.dispatch(packet, topic);
         });
   }
 
-  @Override
-  public void publish(String channelName, P packet) {
+    @Override
+    public void publish(String channelName, P packet) {
     try {
       if (packet.source() == null) {
         packet.source(identity);
       }
       connection.sync().publish(channelName, serializer.serialize(packet));
-    } catch (Exception exception) {
+        } catch (Exception exception) {
       throw new IllegalStateException(
           "Could not publish packet on channel named %s due to unexpected exception."
               .formatted(channelName),
@@ -112,18 +105,18 @@ public final class RedisPacketBroker<P extends Packet> implements PacketBroker<P
     }
   }
 
-  @Override
-  public <R extends P> CompletableFuture<R> request(String channelName, P request) {
+    @Override
+    public <R extends P> CompletableFuture<R> request(String channelName, P request) {
     request.source(identity + randomUUID());
 
-    CompletableFuture<R> future = new CompletableFuture<>();
+        CompletableFuture<R> future = new CompletableFuture<>();
     callbacks.put(request.source(), future);
 
     publish(channelName, request);
     return future;
   }
 
-  private void subscribePacketBroker(String channelName, Consumer<String> callback) {
+    private void subscribePacketBroker(String channelName, Consumer<String> callback) {
     if (subscribedTopics.contains(channelName)) {
       return;
     }
