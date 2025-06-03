@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(project(":rift-common"))
-    api("io.lettuce:lettuce-core:6.5.5.RELEASE")
+    api("io.lettuce:lettuce-core:6.7.0.RELEASE")
 }
