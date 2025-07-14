@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     api(project(":rift-codec"))
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.2")
 }
