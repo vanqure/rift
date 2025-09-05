@@ -1,45 +1,15 @@
-## Rift (*szczelina*)
+## Rift
 
 Rift is a modular, backend-agnostic library that provides distributed caching, locking, and synchronized map storage using a unified API. Although the current implementation is based on Redis, the design anticipates additional backends (e.g., NATS) in future releases.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Core Components](#core-components)
-  - [CacheProvider](#cacheprovider)
-  - [DistributedLock](#distributedlock)
-  - [CachedMap](#cachedmap)
-  - [RiftMap](#riftmap)
-  - [KeyValue](#keyvalue)
-  - [Packet Communication](#packet-communication)
-  - [Scheduler](#scheduler)
-- [RPC and Timeout Handling](#rpc-and-timeout-handling)
-- [Usage Examples](#usage-examples)
-  - [Distributed Locking](#distributed-locking)
-  - [Working with a Cached Map](#working-with-a-cached-map)
-  - [RPC Calls with Timeout Handling](#rpc-calls-with-timeout-handling)
-  - [Example Packet and Subscriber](#example-packet-and-subscriber)
-- [Future Enhancements](#future-enhancements)
-- [License](#license)
-
----
-
-## Overview
-
-Rift provides a high-performance distributed system toolkit that offers:
 
 - **Distributed Caching:** A unified interface supporting various implementations (e.g., AsyncCaffeine, Caffeine, or a simple ConcurrentHashMap).
 - **Distributed Locking:** A fail-safe mechanism using watchers and executors, supporting retries and proper exception handling.
 - **Cached Map:** A synchronized map that leverages local caches combined with a distributed store (similar to Redisson's local cached map).
 - **RPC and Packet Communication:** Asynchronous request/response messaging via a `PacketBroker` using the `CompletableFuture` API for non-blocking remote procedure calls (RPC).
 
-Each module is designed with clear interfaces so that the underlying implementation (currently Redis) can later be replaced or extended.
-
 ---
 
-## Core Components
+## Components
 
 ### CacheProvider
 
@@ -341,28 +311,8 @@ In the above example, the subscriber registers two handler methods:
 
 ---
 
-## Future Enhancements
-
-While Redis is the default backend for current implementations, planned future enhancements include:
-- **NATS-Based Implementation:** For increased resiliency and throughput.
-- **Kafka Integration:** For robust message streaming support.
-- **Additional Caching Strategies:** More options for the `CacheProvider` interface.
-
----
-
 ## License
 
 [LICENSE](LICENSE)
 
 ---
-
-### Conclusion
-
-Rift is designed for those building highly concurrent, distributed systems with complex caching,
-messaging, and state management needs. With its focus on Redis-backed solutions, atomic operations,
-distributed locks, and reactive message handling, Rift is your go-to framework for high-performance
-systems that scale gracefully.
-
-Whether you're building a gaming platform, a messaging service, or an event-driven application, Rift
-delivers the tools you need to ensure speed, consistency, and reliability across all your
-distributed components.
