@@ -316,3 +316,5 @@ In the above example, the subscriber registers two handler methods:
 [LICENSE](LICENSE)
 
 ---
+
+![Visitor Count](https://visitor-badge.laobi.icu/badge?page_id=vanqure.rift)
