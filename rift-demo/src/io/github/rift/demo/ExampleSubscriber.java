@@ -1,23 +1,23 @@
 package io.github.rift.demo;
 
-import io.github.rift.packet.PacketSubscribe;
-import io.github.rift.packet.PacketSubscriber;
+import io.github.wisp.subscription.Subscribe;
+import io.github.wisp.subscription.Subscriber;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public record ExampleSubscriber(String topic, AtomicBoolean received) implements PacketSubscriber {
+public record ExampleSubscriber(String topic, AtomicBoolean received) implements Subscriber {
 
-    @PacketSubscribe
+    @Subscribe
     public void handle(ExamplePacket packet) {
         received.set(true);
         System.out.println("Received packet: " + packet);
     }
 
-    @PacketSubscribe
+    @Subscribe
     public ExampleResponse handle(ExampleRequest request) {
         if (request.getPlayerId() == null) {
             return null; // condition not met, do not process, just remember to handle future's throwable
             // from a timeout!
         }
-        return (ExampleResponse) new ExampleResponse(request.getPlayerId() + "'s location is 0 3 3").pointAt(request);
+        return new ExampleResponse(request.getPlayerId() + "'s location is 0 3 3");
     }
 }
