@@ -1,25 +1,22 @@
 package io.github.rift.redis.map;
 
 import io.github.rift.cache.CacheProvider;
-import io.github.rift.codec.Serializer;
 import io.github.rift.map.CachedMap;
 import io.github.rift.map.CachedMapUpdate;
 import io.github.rift.map.RiftMap;
 import io.github.rift.packet.PacketBroker;
-import io.github.rift.packet.PacketSubscribe;
-import io.github.rift.packet.PacketSubscriber;
+import io.github.rift.serializer.Serializer;
+import io.github.wisp.subscription.Subscribe;
+import io.github.wisp.subscription.Subscriber;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpdate, F, V extends S>
-        implements PacketSubscriber, CachedMap<S, P, F, V> {
+        implements Subscriber, CachedMap<S, P, F, V> {
 
     private final RiftMap<S, F, V> map;
-    private final String key;
     private final PacketBroker packetBroker;
     private final String mapUpdatesTopic;
     private final Serializer serializer;
@@ -34,7 +31,6 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
             PacketBroker<?> packetBroker,
             BiFunction<String, String, P> updateFactory) {
         this.mapUpdatesTopic = "map-updates-" + key;
-        this.key = key;
         this.packetBroker = packetBroker;
         this.map = map;
         this.serializer = serializer;
@@ -60,7 +56,8 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
         cacheProvider.put(field, value);
         map.set(field, value);
         packetBroker.publish(
-                mapUpdatesTopic, updateFactory.apply(serializer.serializeRaw(field), serializer.serialize(value)));
+                mapUpdatesTopic,
+                updateFactory.apply(serializer.serializeRaw(field), serializer.serialize(value)));
     }
 
     @Override
@@ -99,12 +96,9 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
         return mapUpdatesTopic;
     }
 
-    @PacketSubscribe
+    @SuppressWarnings("unused")
+    @Subscribe
     public void onUpdate(P packet) {
-        if (Objects.equals(packet.source(), packetBroker.getIdentity())) {
-            return;
-        }
-
         String updateKey = packet.getKey();
         String updateValue = packet.getValue();
         if (updateValue == null) {
@@ -113,15 +107,5 @@ public final class RedisCachedMap<S extends Serializable, P extends CachedMapUpd
         }
 
         cacheProvider.put(serializer.deserializeRaw(updateKey), serializer.deserialize(updateValue));
-    }
-
-    public void dump(Logger logger) {
-        logger.info("RedisCachedMap: " + key);
-        logger.info("Identity: " + packetBroker.getIdentity());
-        logger.info("Cached Keys: " + cacheProvider.keys());
-        logger.info("Global Size: " + size());
-        for (F field : cacheProvider.keys()) {
-            logger.info("Cached Key: " + field + ", Cached Value: " + get(field));
-        }
     }
 }

@@ -1,4 +1,4 @@
-package io.github.rift.codec;
+package io.github.rift.serializer;
 
 /*
  * Thrown when a serializer encounters an error during serialization or deserialization.

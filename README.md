@@ -1,5 +1,7 @@
 ## Rift
 
+(not designed for production use, an old project of mine)
+
 Rift is a library that provides distributed caching, locking, and synchronized map storage using a unified API.
 
 ### Why Rift?

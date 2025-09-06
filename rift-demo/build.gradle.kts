@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":rift-codec-jackson"))
+    api(project(":rift-serializer-jackson"))
     api(project(":rift-bridge-redis"))
     api(libs.caffeine)
 }

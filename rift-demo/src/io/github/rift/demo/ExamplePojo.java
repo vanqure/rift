@@ -1,7 +1,7 @@
 package io.github.rift.demo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.github.rift.codec.jackson.JacksonSerializable;
+import io.github.rift.serializer.jackson.JacksonSerializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

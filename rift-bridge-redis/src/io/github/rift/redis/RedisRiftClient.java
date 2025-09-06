@@ -6,20 +6,20 @@ import static java.time.Duration.ofSeconds;
 
 import io.github.rift.RiftClient;
 import io.github.rift.cache.CacheProvider;
-import io.github.rift.codec.Packet;
-import io.github.rift.codec.Serializer;
 import io.github.rift.lock.DistributedLock;
 import io.github.rift.map.CachedMap;
 import io.github.rift.map.CachedMapUpdate;
 import io.github.rift.map.RiftMap;
 import io.github.rift.packet.PacketBroker;
-import io.github.rift.packet.PacketSubscriber;
 import io.github.rift.redis.lock.RedisLock;
 import io.github.rift.redis.map.RedisCachedMap;
 import io.github.rift.redis.map.RedisKeyValue;
 import io.github.rift.redis.map.RedisMap;
 import io.github.rift.redis.packet.RedisPacketBroker;
 import io.github.rift.scheduler.Scheduler;
+import io.github.rift.serializer.Packet;
+import io.github.rift.serializer.Serializer;
+import io.github.wisp.subscription.Subscriber;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -73,38 +73,51 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet> imp
             StatefulRedisConnection<String, String> connection,
             StatefulRedisPubSubConnection<String, String> pubSubConnection) {
         return new RedisRiftClient<>(
-                identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
+                identity,
+                scheduler,
+                serializer,
+                packetBroker,
+                keyValue,
+                connection,
+                pubSubConnection);
     }
 
     public static <S extends Serializable, P extends Packet> RiftClient<S, P> create(
-            Serializer serializer, Scheduler scheduler, RedisClient redisClient) {
-        return create(String.valueOf(current().pid()), serializer, scheduler, redisClient);
+            Serializer serializer,
+            Scheduler scheduler,
+            RedisClient redisClient) {
+        return create(String.valueOf(current().pid()), ofSeconds(15L), serializer, scheduler, redisClient);
     }
 
     public static <S extends Serializable, P extends Packet> RiftClient<S, P> create(
-            String identity, Serializer serializer, Scheduler scheduler, RedisClient redisClient) {
+            String identity,
+            Duration requestCleanupInterval,
+            Serializer serializer,
+            Scheduler scheduler,
+            RedisClient redisClient) {
         StatefulRedisConnection<String, String> connection = redisClient.connect();
         StatefulRedisPubSubConnection<String, String> pubSubConnection = redisClient.connectPubSub();
 
-        PacketBroker<P> packetBroker = RedisPacketBroker.create(identity, serializer, connection, pubSubConnection);
+        PacketBroker<P> packetBroker =
+                RedisPacketBroker.create(identity, serializer, requestCleanupInterval, connection, pubSubConnection);
         RedisKeyValue keyValue = RedisKeyValue.create(connection);
 
         return create(identity, scheduler, serializer, packetBroker, keyValue, connection, pubSubConnection);
     }
 
     @Override
-    public void publish(@NotNull String channelName, @NotNull P packet) {
-        packetBroker.publish(channelName, packet);
+    public void publish(@NotNull String topic, @NotNull P packet) {
+        packetBroker.publish(topic, packet);
     }
 
     @Override
-    public <R extends P> @NotNull CompletableFuture<R> request(@NotNull String channelName, @NotNull P request) {
-        return packetBroker.request(channelName, request);
+    public <R extends P> @NotNull CompletableFuture<R> request(@NotNull String topic, @NotNull P request) {
+        return packetBroker.request(topic, request);
     }
 
     @Override
-    public void subscribe(@NotNull PacketSubscriber packetSubscriber) {
-        packetBroker.subscribe(packetSubscriber);
+    public void subscribe(@NotNull Subscriber subscriber) {
+        packetBroker.subscribe(subscriber);
     }
 
     @Override
@@ -114,7 +127,9 @@ public final class RedisRiftClient<S extends Serializable, P extends Packet> imp
 
     @Override
     public <U extends CachedMapUpdate, F, V extends S> CachedMap<S, U, F, V> getCachedMap(
-            String key, CacheProvider<F, V> cacheProvider, BiFunction<String, String, U> updateFactory) {
+            String key,
+            CacheProvider<F, V> cacheProvider,
+            BiFunction<String, String, U> updateFactory) {
         return RedisCachedMap.create(key, serializer, getMap(key), cacheProvider, packetBroker, updateFactory);
     }
 

@@ -1,8 +1,8 @@
-package io.github.rift.codec.jackson;
+package io.github.rift.serializer.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.rift.codec.Serializer;
-import io.github.rift.codec.SerializerException;
+import io.github.rift.serializer.Serializer;
+import io.github.rift.serializer.SerializerException;
 import java.io.IOException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

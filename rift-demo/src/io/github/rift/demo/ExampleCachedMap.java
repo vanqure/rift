@@ -2,8 +2,8 @@ package io.github.rift.demo;
 
 import io.github.rift.RiftClient;
 import io.github.rift.cache.AsyncCaffeineCacheProvider;
-import io.github.rift.codec.jackson.JacksonPacket;
-import io.github.rift.codec.jackson.JacksonSerializable;
+import io.github.rift.serializer.jackson.JacksonPacket;
+import io.github.rift.serializer.jackson.JacksonSerializable;
 import io.github.rift.map.CachedMap;
 import java.util.UUID;
 

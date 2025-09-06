@@ -2,7 +2,7 @@ package io.github.rift.redis.map;
 
 import static java.util.Collections.unmodifiableMap;
 
-import io.github.rift.codec.Serializer;
+import io.github.rift.serializer.Serializer;
 import io.github.rift.map.RiftMap;
 import io.lettuce.core.api.StatefulRedisConnection;
 import java.io.Serializable;

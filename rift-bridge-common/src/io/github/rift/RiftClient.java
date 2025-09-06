@@ -1,12 +1,12 @@
 package io.github.rift;
 
 import io.github.rift.cache.CacheProvider;
-import io.github.rift.codec.Packet;
+import io.github.rift.serializer.Packet;
 import io.github.rift.lock.DistributedLock;
 import io.github.rift.map.CachedMap;
 import io.github.rift.map.CachedMapUpdate;
 import io.github.rift.map.RiftMap;
-import io.github.rift.packet.PacketSubscriber;
+import io.github.wisp.subscription.Subscriber;
 import java.io.Closeable;
 import java.io.Serializable;
 import java.time.Duration;
@@ -20,11 +20,11 @@ public interface RiftClient<S extends Serializable, P extends Packet> extends Cl
         return getLock(key, -1);
     }
 
-    void publish(@NotNull String channelName, @NotNull P packet);
+    void publish(@NotNull String topic, @NotNull P packet);
 
-    <R extends P> @NotNull CompletableFuture<R> request(@NotNull String channelName, @NotNull P request);
+    <R extends P> @NotNull CompletableFuture<R> request(@NotNull String topic, @NotNull P request);
 
-    void subscribe(@NotNull PacketSubscriber packetSubscriber);
+    void subscribe(@NotNull Subscriber subscriber);
 
     <F, V extends S> @NotNull RiftMap<S, F, V> getMap(@NotNull String key);
 

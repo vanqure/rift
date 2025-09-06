@@ -14,15 +14,15 @@ final class RedisPacketDelegate implements RedisPubSubListener<String, String> {
     }
 
     @Override
-    public void message(String channelName, String message) {
-        if (subscribedTopic.equals(channelName)) {
+    public void message(String topic, String message) {
+        if (subscribedTopic.equals(topic)) {
             messageConsumer.accept(message);
         }
     }
 
     @Override
-    public void message(String pattern, String channelName, String message) {
-        message("%s:%s".formatted(pattern, channelName), message);
+    public void message(String pattern, String topic, String message) {
+        message("%s:%s".formatted(pattern, topic), message);
     }
 
     @Override

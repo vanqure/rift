@@ -1,16 +1,17 @@
 package io.github.rift.packet;
 
-import io.github.rift.codec.Packet;
+import io.github.rift.serializer.Packet;
+import io.github.wisp.subscription.Subscriber;
 import java.io.Closeable;
 import java.util.concurrent.CompletableFuture;
 
 public interface PacketBroker<P extends Packet> extends Closeable {
 
-    String getIdentity();
+    String identity();
 
-    void subscribe(PacketSubscriber packetSubscriber);
+    void publish(String topic, P packet);
 
-    void publish(String channelName, P packet);
+    <R extends P> CompletableFuture<R> request(String topic, P request);
 
-    <R extends P> CompletableFuture<R> request(String channelName, P request);
+    void subscribe(Subscriber subscriber);
 }

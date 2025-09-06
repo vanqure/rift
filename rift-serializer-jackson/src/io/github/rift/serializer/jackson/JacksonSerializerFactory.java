@@ -1,4 +1,4 @@
-package io.github.rift.codec.jackson;
+package io.github.rift.serializer.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;

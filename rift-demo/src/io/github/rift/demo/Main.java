@@ -1,10 +1,10 @@
 package io.github.rift.demo;
 
 import io.github.rift.RiftClient;
-import io.github.rift.codec.Serializer;
-import io.github.rift.codec.jackson.JacksonPacket;
-import io.github.rift.codec.jackson.JacksonSerializable;
-import io.github.rift.codec.jackson.JacksonSerializerFactory;
+import io.github.rift.serializer.Serializer;
+import io.github.rift.serializer.jackson.JacksonPacket;
+import io.github.rift.serializer.jackson.JacksonSerializable;
+import io.github.rift.serializer.jackson.JacksonSerializerFactory;
 import io.github.rift.redis.RedisRiftClient;
 import io.github.rift.scheduler.Scheduler;
 import io.github.rift.scheduler.StandaloneScheduler;

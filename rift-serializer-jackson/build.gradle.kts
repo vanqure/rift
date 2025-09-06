@@ -4,10 +4,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":rift-codec-common"))
+    api(project(":rift-serializer-common"))
     api(libs.jackson.databind)
 }
 
 riftPublish {
-    artifactId = "rift-codec-jackson"
+    artifactId = "rift-serializer-jackson"
 }

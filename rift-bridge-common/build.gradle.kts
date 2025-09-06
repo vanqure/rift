@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":rift-codec-common"))
+    api(project(":rift-serializer-common"))
     compileOnly(libs.caffeine)
 }
 

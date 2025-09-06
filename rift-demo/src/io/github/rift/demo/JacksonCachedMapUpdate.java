@@ -1,7 +1,7 @@
 package io.github.rift.demo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.github.rift.codec.jackson.AbstractJacksonPacket;
+import io.github.rift.serializer.jackson.AbstractJacksonPacket;
 import io.github.rift.map.CachedMapUpdate;
 
 public class JacksonCachedMapUpdate extends AbstractJacksonPacket implements CachedMapUpdate {
