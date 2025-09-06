@@ -2,7 +2,7 @@
 annotations = "26.0.2"
 caffeine = "3.2.0"
 jackson = "2.18.3"
-lettuce = "6.5.5.RELEASE"
+lettuce = "6.8.1.RELEASE"
 wisp = "1.0.1-SNAPSHOT"
 
 [libraries]
