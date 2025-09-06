@@ -1,7 +1,7 @@
 [versions]
 annotations = "26.0.2"
 caffeine = "3.2.0"
-jackson = "2.18.3"
+jackson = "2.20.0"
 lettuce = "6.5.5.RELEASE"
 wisp = "1.0.1-SNAPSHOT"
 
