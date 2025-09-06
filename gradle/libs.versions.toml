@@ -1,0 +1,11 @@
+[versions]
+annotations = "26.0.2"
+caffeine = "3.2.0"
+jackson = "2.18.3"
+lettuce = "6.5.5.RELEASE"
+
+[libraries]
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "lettuce" }

@@ -1,11 +1,8 @@
 rootProject.name = "rift"
-include(":rift-codec")
+include(":rift-codec-common")
 include(":rift-codec-jackson")
 
-include(":rift-common")
-include(":rift-spring")
+include(":rift-bridge-common")
+include(":rift-bridge-redis")
 
-include(":rift-redis")
-include(":rift-nats")
-
-include(":rift-examples")
+include(":rift-demo")

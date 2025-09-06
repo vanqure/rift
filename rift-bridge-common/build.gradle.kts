@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     api(project(":rift-codec-common"))
-    api(libs.jackson.databind)
+    compileOnly(libs.caffeine)
 }
 
 riftPublish {
-    artifactId = "rift-codec-jackson"
+    artifactId = "rift-bridge-common"
 }
